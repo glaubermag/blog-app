@@ -8,22 +8,38 @@ interface PaginationProps {
 }
 
 const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
   return (
-    <div className="flex justify-center mt-4 space-x-2">
+    <div className="flex justify-center items-center space-x-2">
       <button
-        disabled={currentPage === 1}
         onClick={() => onPageChange(currentPage - 1)}
-        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        disabled={currentPage === 1}
+        className="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
       >
         Anterior
       </button>
-      <span className="px-3 py-1">{currentPage} / {totalPages}</span>
+
+      {pages.map((page) => (
+        <button
+          key={page}
+          onClick={() => onPageChange(page)}
+          className={`px-3 py-1 rounded-lg border ${
+            currentPage === page
+              ? 'border-blue-500 bg-blue-500 text-white'
+              : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+          } hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors`}
+        >
+          {page}
+        </button>
+      ))}
+
       <button
-        disabled={currentPage === totalPages}
         onClick={() => onPageChange(currentPage + 1)}
-        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        disabled={currentPage === totalPages}
+        className="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
       >
-        Próximo
+        Próxima
       </button>
     </div>
   );

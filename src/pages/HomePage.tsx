@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { PostCard } from '../components/PostCard';
-import { Pagination } from '../components/Pagination';
-import { SearchBar } from '../components/SearchBar';
+import PostCard from '../components/PostCard';
+import Pagination from '../components/Pagination';
+import SearchBar from '../components/SearchBar';
 import { usePosts } from '../hooks/usePosts';
 import { useSearch } from '../hooks/useSearch';
 

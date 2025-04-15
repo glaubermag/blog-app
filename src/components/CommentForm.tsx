@@ -1,57 +1,78 @@
 // src/components/CommentForm.tsx
-import React, { useState } from 'react';
+import React from 'react';
 
 interface CommentFormProps {
+  comment: {
+    name: string;
+    email: string;
+    body: string;
+  };
+  onChange: (comment: { name: string; email: string; body: string }) => void;
   onSubmit: (comment: { name: string; email: string; body: string }) => void;
+  isLoading: boolean;
 }
 
-const CommentForm: React.FC<CommentFormProps> = ({ onSubmit }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [body, setBody] = useState('');
-
+const CommentForm: React.FC<CommentFormProps> = ({
+  comment,
+  onChange,
+  onSubmit,
+  isLoading,
+}) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ name, email, body });
-    setName('');
-    setEmail('');
-    setBody('');
+    onSubmit(comment);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 border p-4 rounded">
-      <h3 className="font-bold mb-2">Adicione um comentário</h3>
-      <div className="mb-2">
+    <form onSubmit={handleSubmit} className="space-y-4 mb-8">
+      <div>
+        <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Nome
+        </label>
         <input
           type="text"
-          placeholder="Nome"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          id="name"
+          value={comment.name}
+          onChange={(e) => onChange({ ...comment, name: e.target.value })}
+          className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
           required
-          className="w-full px-3 py-2 border rounded"
         />
       </div>
-      <div className="mb-2">
+
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Email
+        </label>
         <input
           type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          id="email"
+          value={comment.email}
+          onChange={(e) => onChange({ ...comment, email: e.target.value })}
+          className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
           required
-          className="w-full px-3 py-2 border rounded"
         />
       </div>
-      <div className="mb-2">
+
+      <div>
+        <label htmlFor="body" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Comentário
+        </label>
         <textarea
-          placeholder="Comentário"
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
+          id="body"
+          value={comment.body}
+          onChange={(e) => onChange({ ...comment, body: e.target.value })}
+          rows={4}
+          className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
           required
-          className="w-full px-3 py-2 border rounded"
-        ></textarea>
+        />
       </div>
-      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-        Enviar
+
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        {isLoading ? 'Enviando...' : 'Enviar Comentário'}
       </button>
     </form>
   );

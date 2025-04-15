@@ -1,47 +1,52 @@
 import axios from 'axios';
 import { Post, User, Comment } from '../types';
 
-const api = axios.create({
-  baseURL: 'https://jsonplaceholder.typicode.com'
-});
+const API_URL = 'https://jsonplaceholder.typicode.com';
 
-export const getPosts = async (page: number = 1, limit: number = 10) => {
-  const response = await api.get<Post[]>(`/posts?_page=${page}&_limit=${limit}`);
+export const getPosts = async () => {
+  const response = await axios.get<Post[]>(`${API_URL}/posts`);
   return {
     data: response.data,
-    total: parseInt(response.headers['x-total-count'] || '0')
+    total: response.data.length
   };
 };
 
 export const getPost = async (id: number) => {
-  const response = await api.get<Post>(`/posts/${id}`);
+  const response = await axios.get<Post>(`${API_URL}/posts/${id}`);
+  return response.data;
+};
+
+export const getUsers = async () => {
+  const response = await axios.get<User[]>(`${API_URL}/users`);
   return response.data;
 };
 
 export const getUser = async (id: number) => {
-  const response = await api.get<User>(`/users/${id}`);
+  const response = await axios.get<User>(`${API_URL}/users/${id}`);
+  return response.data;
+};
+
+export const getComments = async (postId: number) => {
+  const response = await axios.get<Comment[]>(`${API_URL}/posts/${postId}/comments`);
   return response.data;
 };
 
 export const getPostComments = async (postId: number) => {
-  const response = await api.get<Comment[]>(`/posts/${postId}/comments`);
+  const response = await axios.get<Comment[]>(`${API_URL}/posts/${postId}/comments`);
   return response.data;
 };
 
 export const getUserPosts = async (userId: number) => {
-  const response = await api.get<Post[]>(`/posts?userId=${userId}`);
+  const response = await axios.get<Post[]>(`${API_URL}/posts?userId=${userId}`);
   return response.data;
 };
 
 export const createComment = async (postId: number, comment: Omit<Comment, 'id' | 'postId'>) => {
-  const response = await api.post<Comment>(`/posts/${postId}/comments`, {
-    ...comment,
-    postId
-  });
+  const response = await axios.post<Comment>(`${API_URL}/posts/${postId}/comments`, comment);
   return response.data;
 };
 
 export const searchPosts = async (query: string) => {
-  const response = await api.get<Post[]>(`/posts?q=${query}`);
+  const response = await axios.get<Post[]>(`${API_URL}/posts?q=${query}`);
   return response.data;
 }; 

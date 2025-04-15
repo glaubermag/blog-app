@@ -1,26 +1,27 @@
+import React from 'react';
+
 interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
 }
 
-export const SearchBar = ({ value, onChange, placeholder = 'Buscar posts...' }: SearchBarProps) => {
+const SearchBar: React.FC<SearchBarProps> = ({ value, onChange, placeholder = 'Buscar...' }) => {
   return (
-    <div className="relative w-full max-w-md mx-auto animate-fade-in">
+    <div className="relative w-full md:w-64">
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full px-4 py-3 pl-12 rounded-lg bg-white shadow-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+        className="w-full px-4 py-2 pl-10 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
       />
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
         <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5"
+          className="h-5 w-5 text-gray-400"
           fill="none"
-          viewBox="0 0 24 24"
           stroke="currentColor"
+          viewBox="0 0 24 24"
         >
           <path
             strokeLinecap="round"
@@ -32,4 +33,6 @@ export const SearchBar = ({ value, onChange, placeholder = 'Buscar posts...' }: 
       </div>
     </div>
   );
-}; 
+};
+
+export default SearchBar; 

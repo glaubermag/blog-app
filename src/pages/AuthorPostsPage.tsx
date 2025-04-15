@@ -1,90 +1,78 @@
-import { useState, useEffect } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
-import { Post, User } from '../types';
-import PostCard from '../components/PostCard';
+import { useQuery } from '@tanstack/react-query';
 import * as api from '../services/api';
+import PostCard from '../components/PostCard';
+import LoadingSpinner from '../components/LoadingSpinner';
+import ErrorMessage from '../components/ErrorMessage';
 
-const AuthorPostsPage = () => {
+const AuthorPostsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [author, setAuthor] = useState<User | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const userId = parseInt(id || '0');
 
-  useEffect(() => {
-    const fetchAuthorData = async () => {
-      if (!id) return;
+  const { data: author, isLoading: isLoadingAuthor, error: authorError } = useQuery({
+    queryKey: ['author', userId],
+    queryFn: () => api.getUser(userId),
+  });
 
-      try {
-        setLoading(true);
-        const [authorData, postsData] = await Promise.all([
-          api.getUser(parseInt(id)),
-          api.getUserPosts(parseInt(id))
-        ]);
+  const { data: posts, isLoading: isLoadingPosts, error: postsError } = useQuery({
+    queryKey: ['author-posts', userId],
+    queryFn: () => api.getUserPosts(userId),
+    enabled: !!userId,
+  });
 
-        setAuthor(authorData);
-        setPosts(postsData);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Erro ao carregar dados do autor');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAuthorData();
-  }, [id]);
-
-  if (loading) {
-    return (
-      <div className="text-center">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
-        <p className="mt-2 text-gray-600">Carregando perfil do autor...</p>
-      </div>
-    );
+  if (isLoadingAuthor || isLoadingPosts) {
+    return <LoadingSpinner />;
   }
 
-  if (error || !author) {
-    return (
-      <div className="text-center text-red-600">
-        {error || 'Autor não encontrado'}
-      </div>
-    );
+  if (authorError || postsError) {
+    return <ErrorMessage message="Erro ao carregar os posts do autor. Por favor, tente novamente mais tarde." />;
+  }
+
+  if (!author || !posts) {
+    return <ErrorMessage message="Autor não encontrado." />;
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">{author.name}</h1>
-        <p className="text-gray-600 mb-1">@{author.username}</p>
-        <a 
-          href={`mailto:${author.email}`}
-          className="text-blue-600 hover:text-blue-800 transition-colors"
-        >
-          {author.email}
-        </a>
+    <div className="max-w-4xl mx-auto space-y-8">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+        <div className="p-6">
+          <div className="flex items-center space-x-4">
+            <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+              <span className="text-2xl text-gray-600 dark:text-gray-300 font-medium">
+                {author.name.charAt(0)}
+              </span>
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+                {author.name}
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300">
+                {author.company.name}
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {author.email}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        Posts do autor ({posts.length})
-      </h2>
+      <div className="space-y-6">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+          Posts ({posts.length})
+        </h2>
 
-      {posts.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {posts.map((post) => (
             <PostCard
               key={post.id}
-              title={post.title}
-              excerpt={post.body}
-              date={new Date().toLocaleDateString()}
-              author={author.name}
-              imageUrl={`https://picsum.photos/seed/${post.id}/800/400`}
-              slug={post.id.toString()}
+              post={post}
+              author={author}
             />
           ))}
         </div>
-      ) : (
-        <p className="text-center text-gray-600">Este autor ainda não tem posts.</p>
-      )}
+      </div>
     </div>
   );
 };
