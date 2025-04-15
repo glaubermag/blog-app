@@ -21,9 +21,23 @@ export const getUsers = async () => {
   return response.data;
 };
 
+export class UserNotFoundError extends Error {
+  constructor(userId: number) {
+    super(`Usuário com ID ${userId} não foi encontrado`);
+    this.name = 'UserNotFoundError';
+  }
+}
+
 export const getUser = async (id: number) => {
-  const response = await axios.get<User>(`${API_URL}/users/${id}`);
-  return response.data;
+  try {
+    const response = await axios.get<User>(`${API_URL}/users/${id}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      throw new UserNotFoundError(id);
+    }
+    throw error;
+  }
 };
 
 export const getComments = async (postId: number) => {

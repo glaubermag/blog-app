@@ -26,10 +26,12 @@ const queryClient = new QueryClient({
 });
 
 const App: React.FC = () => {
+  const basePath = import.meta.env.BASE_URL;
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <Router>
+        <Router basename={basePath}>
           <div className="min-h-screen flex flex-col">
             <Header />
             <main className="flex-grow container mx-auto px-4 py-8">
@@ -45,7 +47,7 @@ const App: React.FC = () => {
           </div>
         </Router>
       </ThemeProvider>
-      <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 };
