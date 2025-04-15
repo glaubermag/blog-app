@@ -36,7 +36,10 @@ const PostDetailPage: React.FC = () => {
 
   const { data: comments = [], isLoading: isLoadingComments, error: commentsError } = useQuery<Comment[]>({
     queryKey: ['comments', postId],
-    queryFn: () => api.getComments(postId),
+    queryFn: () => api.getComments(postId).then(comments => {
+      // Ordena os comentários por ID em ordem decrescente (mais recentes primeiro)
+      return comments.sort((a, b) => b.id - a.id);
+    }),
     gcTime: 1000 * 60 * 30, // 30 minutos
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
@@ -51,7 +54,8 @@ const PostDetailPage: React.FC = () => {
           id: Date.now(),
           postId: postId,
         };
-        return [...(oldComments || []), commentWithId];
+        // Inverte a ordem para que o novo comentário apareça primeiro
+        return [commentWithId, ...(oldComments || [])];
       });
       setNewComment({ name: '', email: '', body: '' });
     },
