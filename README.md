@@ -143,8 +143,8 @@ Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICE
 
 ## 👨‍💻 Autor
 
-- **Nome do Autor**
-- Twitter: [@seu_twitter](https://twitter.com/devglaubermag)
+- **Glauber Ariel Magalhães**
+- Twitter: [@devglaubermag](https://twitter.com/devglaubermag)
 - Email: contato@glaubermag.dev.br
 
 ## 🙏 Agradecimentos
