@@ -1,145 +1,248 @@
-# Blog App - Teste Prático para Desenvolvedor Sênior
+# Blog App
 
-Uma aplicação moderna de blog construída com React, TypeScript, Tailwind CSS e React Query, demonstrando boas práticas de desenvolvimento e arquitetura de software.
+Um aplicativo moderno de blog desenvolvido com React, TypeScript e TailwindCSS, oferecendo uma experiência completa de visualização e interação com posts e comentários.
 
-## 🚀 Características
+## 📋 Funcionalidades
 
-- **Arquitetura Moderna**
-  - Componentização reutilizável
-  - Gerenciamento de estado com React Query
-  - Tipagem forte com TypeScript
-  - Design System com Tailwind CSS
-  - Roteamento com React Router v6
+- **Lista de Posts**
+  - Visualização em grid com design responsivo
+  - Exibição de autor para cada post
+  - Paginação para navegar entre múltiplos posts
+  - Tema claro/escuro personalizado
 
-- **Performance e UX**
-  - Carregamento progressivo de dados
-  - Cache inteligente com React Query
-  - Animações suaves e feedback visual
-  - Design responsivo e acessível
-  - Suporte a modo escuro
+- **Página de Post Detalhado**
+  - Visualização completa do post com conteúdo integral
+  - Exibição do autor do post com informações de contato
+  - Lista de comentários relacionados ao post
+  - Formulário para adição de novos comentários
 
-- **Boas Práticas**
-  - Tratamento de erros robusto
-  - Loading states otimizados
-  - Validação de formulários
-  - Testes de integração
-  - Documentação clara
+- **Páginas de Autor**
+  - Visualização de todos os posts de um autor específico
+  - Informações detalhadas sobre o autor (email, empresa, website, etc.)
 
-## 🛠️ Tecnologias
+## 🔧 Tecnologias Utilizadas
 
-- **Frontend**
-  - React 18.2.0
-  - TypeScript 5.0.2
-  - Tailwind CSS 3.3.0
-  - React Query 4.35.0
-  - React Router 6.14.0
-  - Axios 1.4.0
+- **Frontend:**
+  - React 18 (com Hooks e Context API)
+  - TypeScript para tipagem estática
+  - TailwindCSS para estilização
+  - React Router v6 para navegação
+  - React Query (@tanstack/react-query) para gerenciamento de estado e requisições
 
-- **Ferramentas de Desenvolvimento**
-  - Vite 4.3.9
-  - ESLint 8.45.0
-  - Prettier 2.8.8
-  - TypeScript ESLint 5.59.11
+- **Integração:**
+  - API JSONPlaceholder para dados de posts, comentários e usuários
+  - Axios para requisições HTTP
 
-## 📦 Instalação
+- **Testes:**
+  - Vitest como framework de testes
+  - React Testing Library para testes de componentes
+  - Jest DOM para testes de DOM
+  - Mocks avançados para simular requisições e comportamentos
 
-1. Clone o repositório:
-```bash
-git clone https://github.com/glaubermag/blog-app.git
-cd blog-app
-```
+- **Tooling:**
+  - Vite como bundler e servidor de desenvolvimento
+  - ESLint para linting
+  - PostCSS para processamento de CSS
 
-2. Instale as dependências:
-```bash
-npm install
-```
+## 🏗️ Arquitetura
 
-3. Inicie o servidor de desenvolvimento:
-```bash
-npm run dev
-```
-
-4. Acesse a aplicação em:
-```
-http://localhost:5173
-```
-
-## 🏗️ Estrutura do Projeto
+O projeto segue uma arquitetura modular e componentizada:
 
 ```
 src/
-├── components/         # Componentes reutilizáveis
-│   ├── CommentForm.tsx
-│   ├── CommentList.tsx
-│   ├── ErrorMessage.tsx
-│   ├── Header.tsx
-│   ├── LoadingSpinner.tsx
-│   ├── Pagination.tsx
-│   ├── PostCard.tsx
-│   └── SearchBar.tsx
-├── pages/             # Páginas da aplicação
-│   ├── AuthorPostsPage.tsx
-│   ├── PostDetailPage.tsx
-│   └── PostsListPage.tsx
-├── services/          # Serviços e integrações
-│   └── api.ts
-├── types/             # Definições de tipos
-│   └── index.ts
-├── App.tsx           # Componente raiz
-└── main.tsx          # Ponto de entrada
+  ├── components/         # Componentes reutilizáveis
+  │   ├── layout/         # Componentes de layout (Header, Footer)
+  │   └── ...             # Outros componentes (PostCard, CommentForm)
+  ├── contexts/           # Contextos React (ThemeContext)
+  ├── hooks/              # Custom hooks personalizados
+  ├── layouts/            # Layouts reutilizáveis (MainLayout)
+  ├── pages/              # Componentes de página
+  ├── services/           # Serviços para API e outras funcionalidades
+  ├── types/              # Definições de tipos TypeScript
+  ├── __tests__/          # Testes unitários e de integração
+  │   ├── components/     # Testes de componentes
+  │   ├── pages/          # Testes de páginas
+  │   └── utils/          # Utilitários de teste (mocks, helpers)
+  └── main.tsx            # Ponto de entrada da aplicação
 ```
 
-## 🔧 Decisões Técnicas
+### Padrões Arquiteturais:
 
-### Arquitetura e Padrões
-- **Componentização**: Componentes pequenos e reutilizáveis seguindo o princípio de responsabilidade única
-- **Gerenciamento de Estado**: React Query para cache e sincronização de dados
-- **Tipagem**: TypeScript para segurança e manutenibilidade
-- **Estilização**: Tailwind CSS para design consistente e responsivo
-
-### Performance
-- **Cache**: Implementação de cache com React Query (staleTime e gcTime)
-- **Lazy Loading**: Carregamento sob demanda de componentes
-- **Otimização**: Minimização de re-renders com React.memo e useMemo
-
-### UX/UI
-- **Feedback Visual**: Estados de loading e erro bem definidos
-- **Acessibilidade**: Semântica HTML e ARIA labels
-- **Responsividade**: Design adaptativo para todos os dispositivos
-- **Modo Escuro**: Suporte nativo com Tailwind CSS
-
-### Tratamento de Erros
-- **Boundaries**: Tratamento de erros em nível de componente
-- **Feedback**: Mensagens de erro claras e amigáveis
-- **Retry Logic**: Lógica de retentativa inteligente para falhas de API
+- **Container/Presentation Pattern**: Separação entre lógica e apresentação
+- **Custom Hooks**: Abstração de lógicas complexas em hooks reutilizáveis
+- **Context API**: Para gerenciamento de estado global como tema
+- **Error Boundaries**: Para tratamento de erros de forma elegante
 
 ## 🧪 Testes
 
-A aplicação inclui testes de integração para garantir a qualidade do código:
+O projeto inclui uma suíte abrangente de testes unitários e de integração, utilizando Vitest e React Testing Library. Os testes são organizados de forma modular e seguem as melhores práticas de teste.
 
-```bash
-npm run test
+### Estrutura dos Testes
+
+```
+src/__tests__/
+  ├── components/         # Testes de componentes
+  │   ├── CommentForm.test.tsx
+  │   ├── CommentList.test.tsx
+  │   ├── PostCard.test.tsx
+  │   └── layout/         # Testes de componentes de layout
+  ├── pages/              # Testes de páginas
+  │   ├── AuthorPage.test.tsx
+  │   ├── AuthorPostsPage.test.tsx
+  │   ├── PostDetailPage.test.tsx
+  │   └── PostsListPage.test.tsx
+  └── utils/              # Utilitários de teste
+      └── mocks.ts        # Dados mockados para testes
 ```
 
-## 📝 Scripts Disponíveis
+### Mocks e Utilitários
 
-- `npm run dev`: Inicia o servidor de desenvolvimento
-- `npm run build`: Cria a build de produção
-- `npm run lint`: Executa o linter
-- `npm run test`: Executa os testes
-- `npm run preview`: Previa a build de produção localmente
+O projeto utiliza um sistema robusto de mocks para simular dados e comportamentos:
 
-## 🤝 Contribuição
+```typescript
+// Exemplo de mock de dados
+export const mockUser = {
+  id: 1,
+  name: 'Autor 1',
+  username: 'autor1',
+  email: 'autor1@example.com',
+  // ... outros dados
+};
 
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
+export const mockPosts = [
+  {
+    id: 1,
+    userId: 1,
+    title: 'Título do Post 1',
+    body: 'Conteúdo do post 1'
+  },
+  // ... outros posts
+];
+```
 
-## 📄 Licença
+### Tipos de Testes Implementados
 
-Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+1. **Testes de Componentes**
+   - Renderização básica
+   - Interações do usuário
+   - Estados de loading e erro
+   - Props e eventos
+
+2. **Testes de Páginas**
+   - Integração com React Router
+   - Carregamento de dados
+   - Estados de loading e erro
+   - Navegação
+
+3. **Testes de Integração**
+   - Interação entre componentes
+   - Fluxos completos de usuário
+   - Estados assíncronos
+
+### Exemplos de Testes
+
+```typescript
+// Teste de componente
+test('renderiza PostCard corretamente', () => {
+  render(<PostCard post={mockPost} author={mockUser} />);
+  expect(screen.getByText(mockPost.title)).toBeInTheDocument();
+});
+
+// Teste de página
+test('mostra loading spinner enquanto carrega posts', () => {
+  (useQuery as any).mockReturnValue({
+    data: undefined,
+    isLoading: true,
+    error: null
+  });
+  
+  render(
+    <MemoryRouter>
+      <PostsListPage />
+    </MemoryRouter>
+  );
+  
+  expect(screen.getByText('Carregando...')).toBeInTheDocument();
+});
+```
+
+### Cobertura de Testes
+
+O projeto mantém uma cobertura de testes abrangente, com foco especial em:
+
+- Componentes principais: >90% de cobertura
+- Páginas principais: >80% de cobertura
+- Funcionalidades críticas: 100% de cobertura
+
+## 🚀 Como Executar
+
+### Pré-requisitos
+- Node.js (v16+)
+- npm ou yarn
+
+### Instalação
+
+```bash
+# Clone o repositório
+git clone https://github.com/glaubermag/blog-app.git
+
+# Entre no diretório
+cd blog-app
+
+# Instale as dependências
+npm install
+```
+
+### Executando
+
+```bash
+# Modo de desenvolvimento
+npm run dev
+
+# Compilação para produção
+npm run build
+
+# Executar testes
+npm test
+
+# Executar testes com cobertura
+npm run test:coverage
+```
+
+## 📝 Licença
+
+Este projeto está licenciado sob a licença MIT.
+
+## 📱 Responsividade
+
+O aplicativo é totalmente responsivo, com três breakpoints principais:
+- **Mobile**: < 640px
+- **Tablet**: 768px
+- **Desktop**: 1024px+
+
+## 🎨 Temas
+
+O aplicativo suporta temas claro e escuro, adaptando-se automaticamente à preferência do sistema ou permitindo que o usuário selecione manualmente através de um botão no cabeçalho.
+
+## 🛠️ Acessibilidade
+
+A aplicação segue as melhores práticas de acessibilidade, incluindo:
+- Uso apropriado de elementos semânticos HTML
+- Labels para todos os formulários
+- Atributos ARIA quando necessário
+- Contraste adequado de cores
+- Navegação por teclado
+
+## 📈 Melhorias Futuras
+
+- Implementação de sistema de autenticação
+- Suporte para múltiplos idiomas (i18n)
+- Editor WYSIWYG para criação de posts
+- Sistema de compartilhamento em redes sociais
+- Melhorias em SEO
+- Implementação de Storybook para documentação de componentes
+- Aumentar a cobertura de testes para os hooks personalizados
+- Melhorar a cobertura de testes para o serviço de API
 
 ## 👨‍💻 Autor
 

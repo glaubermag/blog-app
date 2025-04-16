@@ -1,15 +1,19 @@
 // src/components/CommentForm.tsx
 import React from 'react';
 
+interface Comment {
+  name: string;
+  email: string;
+  body: string;
+  postId?: number;
+}
+
 interface CommentFormProps {
-  comment: {
-    name: string;
-    email: string;
-    body: string;
-  };
-  onChange: (comment: { name: string; email: string; body: string }) => void;
-  onSubmit: (comment: { name: string; email: string; body: string }) => void;
+  comment: Comment;
+  onChange: (comment: Comment) => void;
+  onSubmit: (comment: Comment) => void;
   isLoading: boolean;
+  postId?: number;
 }
 
 const CommentForm: React.FC<CommentFormProps> = ({
@@ -17,16 +21,17 @@ const CommentForm: React.FC<CommentFormProps> = ({
   onChange,
   onSubmit,
   isLoading,
+  postId,
 }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(comment);
+    onSubmit({ ...comment, postId });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 mb-8">
+    <form onSubmit={handleSubmit} className="space-y-4" data-testid="comment-form">
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
           Nome
         </label>
         <input
@@ -34,13 +39,12 @@ const CommentForm: React.FC<CommentFormProps> = ({
           id="name"
           value={comment.name}
           onChange={(e) => onChange({ ...comment, name: e.target.value })}
-          className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           required
         />
       </div>
-
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
           Email
         </label>
         <input
@@ -48,32 +52,32 @@ const CommentForm: React.FC<CommentFormProps> = ({
           id="email"
           value={comment.email}
           onChange={(e) => onChange({ ...comment, email: e.target.value })}
-          className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           required
         />
       </div>
-
       <div>
-        <label htmlFor="body" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label htmlFor="body" className="block text-sm font-medium text-gray-700">
           Comentário
         </label>
         <textarea
           id="body"
           value={comment.body}
           onChange={(e) => onChange({ ...comment, body: e.target.value })}
-          rows={4}
-          className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
+          rows={3}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           required
         />
       </div>
-
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-      >
-        {isLoading ? 'Enviando...' : 'Enviar Comentário'}
-      </button>
+      <div>
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+        >
+          {isLoading ? 'Enviando...' : 'Enviar Comentário'}
+        </button>
+      </div>
     </form>
   );
 };
