@@ -1,9 +1,9 @@
 // src/types.d.ts
 export interface Post {
   id: number;
-  userId: number;
   title: string;
   body: string;
+  userId: number;
 }
 
 export interface User {
@@ -36,6 +36,35 @@ export interface Comment {
   name: string;
   email: string;
   body: string;
+}
+
+export interface ApiError {
+  message: string;
+  status: number;
+}
+
+export interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+export interface SearchProps {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  suggestions?: string[];
+  onSuggestionSelect?: (suggestion: string) => void;
+  isLoading?: boolean;
+}
+
+export interface ThemeContextType {
+  isDarkMode: boolean;
+  toggleTheme: () => void;
+}
+
+export interface ToastContextType {
+  showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
 }
 
 export interface SearchResult<T> {

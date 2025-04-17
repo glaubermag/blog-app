@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
@@ -76,7 +76,9 @@ describe('CommentForm', () => {
     );
 
     const nameInput = screen.getByLabelText(/nome/i);
-    fireEvent.change(nameInput, { target: { value: 'ab' } });
+    await act(async () => {
+      fireEvent.change(nameInput, { target: { value: 'ab' } });
+    });
 
     await waitFor(() => {
       expect(screen.getByText(/o nome deve ter pelo menos 3 caracteres/i)).toBeInTheDocument();
@@ -94,7 +96,9 @@ describe('CommentForm', () => {
     );
 
     const emailInput = screen.getByLabelText(/email/i);
-    fireEvent.change(emailInput, { target: { value: 'email-invalido' } });
+    await act(async () => {
+      fireEvent.change(emailInput, { target: { value: 'email-invalido' } });
+    });
 
     await waitFor(() => {
       expect(screen.getByText(/por favor, insira um email válido/i)).toBeInTheDocument();
@@ -112,14 +116,16 @@ describe('CommentForm', () => {
     );
 
     const bodyInput = screen.getByLabelText(/comentário/i);
-    fireEvent.change(bodyInput, { target: { value: 'curto' } });
+    await act(async () => {
+      fireEvent.change(bodyInput, { target: { value: 'curto' } });
+    });
 
     await waitFor(() => {
       expect(screen.getByText(/o comentário deve ter pelo menos 10 caracteres/i)).toBeInTheDocument();
     });
   });
 
-  it('mostra preview do comentário', () => {
+  it('mostra preview do comentário', async () => {
     const comment = {
       name: 'João Silva',
       email: 'joao@exemplo.com',
@@ -135,7 +141,9 @@ describe('CommentForm', () => {
       />
     );
 
-    fireEvent.click(screen.getByText('Mostrar preview'));
+    await act(async () => {
+      fireEvent.click(screen.getByText('Mostrar preview'));
+    });
 
     expect(screen.getByText(/preview do comentário/i)).toBeInTheDocument();
     expect(screen.getByText(comment.body, { selector: 'p.text-gray-600' })).toBeInTheDocument();
@@ -153,7 +161,9 @@ describe('CommentForm', () => {
     );
 
     const submitButton = screen.getByRole('button', { name: /enviar comentário/i });
-    await userEvent.click(submitButton);
+    await act(async () => {
+      fireEvent.click(submitButton);
+    });
 
     expect(mockOnSubmit).not.toHaveBeenCalled();
   });
@@ -162,7 +172,7 @@ describe('CommentForm', () => {
     const validComment = {
       name: 'João Silva',
       email: 'joao@exemplo.com',
-      body: 'Este é um comentário de teste válido.',
+      body: 'Este é um comentário válido com mais de 10 caracteres.'
     };
 
     render(
@@ -175,7 +185,9 @@ describe('CommentForm', () => {
     );
 
     const submitButton = screen.getByRole('button', { name: /enviar comentário/i });
-    await userEvent.click(submitButton);
+    await act(async () => {
+      fireEvent.click(submitButton);
+    });
 
     expect(mockOnSubmit).toHaveBeenCalledWith(validComment);
   });

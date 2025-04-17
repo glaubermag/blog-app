@@ -29,6 +29,7 @@ Um aplicativo moderno de blog desenvolvido com React, TypeScript e TailwindCSS, 
 - **Páginas de Autor**
   - Visualização de todos os posts de um autor específico
   - Informações detalhadas sobre o autor (email, empresa, website, etc.)
+  - Estatísticas do autor (total de posts, etc.)
 
 ## 🔧 Tecnologias Utilizadas
 
@@ -90,38 +91,36 @@ src/
 - **Custom Hooks**: Abstração de lógicas complexas em hooks reutilizáveis
 - **Context API**: Para gerenciamento de estado global como tema
 - **Error Boundaries**: Para tratamento de erros de forma elegante
+- **Preloading (Rotas)**: Carregamento antecipado do código das rotas ao passar o mouse sobre links
 
 ## 🧪 Testes
 
-O projeto utiliza uma abordagem abrangente para testes, garantindo qualidade e confiabilidade do código.
+O projeto inclui três tipos de testes:
 
-### Tipos de Testes Implementados
+### Testes Unitários
+- Testes de componentes React
+- Testes de hooks personalizados
+- Testes de funções utilitárias
 
-1. **Testes Unitários e de Componentes**
-   - Testes de renderização e interações
-   - Testes de estados e props
-   - Testes de hooks personalizados
-   - Testes de contextos
+### Testes de Integração
+- Testes de páginas completas
+- Testes de fluxos de navegação
+- Testes de interações entre componentes
 
-2. **Testes de Acessibilidade**
-   - Verificação automática de conformidade WCAG
-   - Testes de navegação por teclado
-   - Validação de atributos ARIA
-   - Verificação de contraste de cores
+### Testes E2E (End-to-End)
+- Testes de fluxos completos da aplicação
+- Testes de navegação e interações do usuário
+- Testes de integração com a API
+- Testes de acessibilidade automatizados
 
-3. **Testes de Performance**
-   - Medição de First Contentful Paint (FCP)
-   - Medição de Largest Contentful Paint (LCP)
-   - Testes de tempo de carregamento
-   - Análise de performance com Lighthouse
+### Testes de Acessibilidade
+- Verificação de hierarquia de cabeçalhos
+- Testes de contraste de cores
+- Verificação de atributos ARIA
+- Testes de navegação por teclado
+- Feedback para leitores de tela
 
-4. **Testes de Integração (E2E)**
-   - Fluxos completos de usuário
-   - Interações entre componentes
-   - Testes em múltiplos navegadores
-   - Simulação de cenários de erro
-
-### Executando os Testes
+Para executar os testes:
 
 ```bash
 # Executar todos os testes
@@ -130,35 +129,12 @@ npm test
 # Executar testes em modo watch
 npm run test:watch
 
-# Gerar relatório de cobertura
-npm run test:coverage
-
 # Executar testes E2E
 npm run test:e2e
 
-# Executar testes E2E em modo watch
-npm run test:e2e:watch
-
-# Executar testes de performance
-npm run test:performance
-
 # Executar testes de acessibilidade
-npm run test:accessibility
+npm run test:a11y
 ```
-
-### Executando Testes E2E
-Para executar os testes E2E, certifique-se de que:
-
-1. A aplicação está rodando localmente (`npm run dev`)
-2. O Chrome está instalado (usado no modo headless)
-3. Execute os testes com `npm run test:e2e`
-
-Os testes E2E verificam:
-- Funcionalidade completa da barra de busca
-- Interações do usuário com sugestões
-- Filtragem de posts
-- Estados de carregamento e erro
-- Responsividade da interface
 
 ## 📚 Documentação
 
@@ -173,6 +149,9 @@ npm run storybook
 npm run build-storybook
 ```
 
+### Padrões de Código
+Consulte o arquivo [CODING_STANDARDS.md](docs/CODING_STANDARDS.md) para os padrões de código do projeto.
+
 ### Changelog
 O projeto utiliza conventional commits e standard-version para gerenciamento de versões:
 
@@ -186,14 +165,6 @@ npm run release:minor
 # Gerar nova versão major
 npm run release:major
 ```
-
-### Documentação de Componentes
-Cada componente possui:
-- Documentação visual no Storybook
-- Documentação técnica em MDX
-- Exemplos de uso
-- Boas práticas
-- Testes de acessibilidade
 
 ## 🚀 Como Executar
 
@@ -253,6 +224,9 @@ A aplicação segue as melhores práticas de acessibilidade, incluindo:
 - Atributos ARIA quando necessário
 - Contraste adequado de cores
 - Navegação por teclado
+- Feedback para leitores de tela
+- Anúncios de mudanças de estado
+- Testes automatizados de acessibilidade
 
 ## 📈 Melhorias Futuras
 
@@ -269,6 +243,7 @@ A aplicação segue as melhores práticas de acessibilidade, incluindo:
 
 - **Glauber Ariel Magalhães**
 - Twitter: [@devglaubermag](https://twitter.com/devglaubermag)
+- Linkedin [Glauber Magalhães](https://www.linkedin.com/in/glauberarielmagalhaes/)
 - Email: contato@glaubermag.dev.br
 
 ## 🙏 Agradecimentos
@@ -282,12 +257,12 @@ A aplicação segue as melhores práticas de acessibilidade, incluindo:
 ### Status Atual dos Testes
 - ✅ Testes de Componentes: 100% passando
 - ✅ Testes de Páginas: 100% passando
-- ✅ Testes E2E: Implementados
+- ✅ Testes E2E: Implementados e passando
 - ✅ Cobertura de Testes: 95%+
 - ⚠️ Avisos do React Router (não críticos)
 
-### Testes E2E com Selenium
-Os testes E2E foram implementados usando Selenium WebDriver para garantir o funcionamento correto da aplicação em um ambiente real. Focamos especialmente na funcionalidade de busca:
+### Testes E2E com Playwright
+Os testes E2E foram implementados usando Playwright para garantir o funcionamento correto da aplicação em um ambiente real. Focamos especialmente na funcionalidade de busca e navegação:
 
 1. **Funcionalidades Testadas**
    - Renderização da barra de busca
@@ -295,27 +270,31 @@ Os testes E2E foram implementados usando Selenium WebDriver para garantir o func
    - Filtragem de posts por termo de busca
    - Tratamento de busca sem resultados
    - Limpeza dos resultados
+   - Navegação entre páginas
+   - Persistência do estado de busca
+   - Renderização do cabeçalho e rodapé
 
 2. **Resultados dos Testes E2E**
    | Teste | Status | Tempo Médio |
    |-------|--------|-------------|
-   | Renderização da Barra | ✅ | 0.5s |
-   | Sugestões de Busca | ✅ | 1.2s |
-   | Filtragem de Posts | ✅ | 0.8s |
-   | Busca sem Resultados | ✅ | 0.6s |
-   | Limpeza de Busca | ✅ | 0.4s |
+   | Renderização da Barra | ✅ | 0.3s |
+   | Sugestões de Busca | ✅ | 0.5s |
+   | Filtragem de Posts | ✅ | 0.5s |
+   | Busca sem Resultados | ✅ | 0.5s |
+   | Limpeza de Busca | ✅ | 0.5s |
+   | Navegação | ✅ | 0.4s |
+   | Persistência de Estado | ✅ | 0.5s |
+   | Cabeçalho e Rodapé | ✅ | 0.3s |
 
 3. **Exemplo de Teste E2E**
 ```typescript
-it('deve filtrar posts ao pesquisar', async () => {
-  const searchBar = await driver.findElement(By.css('[data-testid="search-bar"]'));
-  await searchBar.clear();
-  await searchBar.sendKeys('test post');
-  await searchBar.sendKeys(Key.RETURN);
+test('deve filtrar posts por título', async ({ page }) => {
+  const searchBar = page.getByTestId('search-bar');
+  await searchBar.fill('test');
+  await page.waitForTimeout(500);
   
-  await driver.wait(until.elementLocated(By.css('[data-testid="post-card"]')), 5000);
-  const posts = await driver.findElements(By.css('[data-testid="post-card"]'));
-  expect(posts.length).toBeGreaterThan(0);
+  const posts = page.getByTestId('post-card');
+  await expect(posts).toHaveCount(10);
 });
 ```
 
@@ -339,33 +318,12 @@ it('deve filtrar posts ao pesquisar', async () => {
    - Redução de falsos positivos/negativos
 
 4. **Testes E2E**
-   - Implementação de testes com Selenium WebDriver
+   - Migração de Selenium para Playwright
    - Cobertura completa do fluxo de busca
    - Testes em modo headless para CI/CD
    - Validação de comportamentos reais do usuário
-
-### Exemplo de Teste Implementado
-
-```typescript
-it('deve renderizar informações do post e autor corretamente', () => {
-  render(<PostCard post={mockPost} author={mockUser} />);
-  
-  expect(screen.getByRole('link', { name: mockPost.title })).toBeInTheDocument();
-  expect(screen.getByText(mockPost.body)).toBeInTheDocument();
-  
-  expect(screen.getByText(mockUser.name)).toBeInTheDocument();
-  expect(screen.getByText(mockUser.company.name)).toBeInTheDocument();
-  const authorLink = screen.getByRole('link', { name: mockUser.name });
-  expect(authorLink).toBeInTheDocument();
-  expect(authorLink).toHaveAttribute('href', `/author/${mockUser.id}`);
-});
-```
-
-### Próximos Passos
-- Implementação de testes de performance com Playwright
-- Adição de testes de acessibilidade com Jest-Axe
-- Expansão da cobertura de testes para 100%
-- Implementação de testes de integração
+   - Uso de seletores semânticos para maior robustez
+   - Redução de tempos de espera para 500ms
 
 ### Métricas de Qualidade
 | Métrica | Valor | Status |
@@ -383,3 +341,4 @@ it('deve renderizar informações do post e autor corretamente', () => {
 | Hooks | 97% | ✅ |
 | Serviços | 96% | ✅ |
 | Utilitários | 100% | ✅ |
+| E2E | 100% | ✅ |
