@@ -37,3 +37,30 @@ export interface Comment {
   email: string;
   body: string;
 }
+
+export interface SearchResult<T> {
+  items: T[];
+  total: number;
+  suggestions: string[];
+}
+
+export interface AuthorPosts {
+  posts: Post[];
+  author: User;
+}
+
+export interface PaginationParams {
+  page: number;
+  limit: number;
+}
+
+export interface SearchParams {
+  query: string;
+  filters?: {
+    authorId?: number;
+    dateRange?: {
+      start: string;
+      end: string;
+    };
+  };
+}

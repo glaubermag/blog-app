@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom';
 import { expect, afterEach, vi, describe, it } from 'vitest';
 import { cleanup } from '@testing-library/react';
+import { configureAxe } from 'jest-axe';
 
 // Limpa o DOM após cada teste
 afterEach(() => {
@@ -41,4 +42,21 @@ vi.mock('@tanstack/react-query', async () => {
       invalidateQueries: vi.fn(),
     })),
   };
-}); 
+});
+
+// Configuração do axe para testes de acessibilidade
+export const axe = configureAxe({
+  rules: {
+    // Desabilitar regras específicas se necessário
+    'color-contrast': { enabled: false },
+  },
+});
+
+// Extensão do expect para testes de acessibilidade
+declare global {
+  namespace jest {
+    interface Matchers<R> {
+      toHaveNoViolations(): R;
+    }
+  }
+} 

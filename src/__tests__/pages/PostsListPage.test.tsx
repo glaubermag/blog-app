@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import PostsListPage from '../../pages/PostsListPage';
-import { mockPosts } from '../utils/mocks';
+import { mockPosts, mockUser } from '../utils/mocks';
 import '@testing-library/jest-dom';
 
 vi.mock('@tanstack/react-query', () => ({
@@ -20,11 +20,17 @@ describe('PostsListPage', () => {
   });
 
   it('deve mostrar loading spinner enquanto carrega', () => {
-    (useQuery as any).mockReturnValue({
-      data: undefined,
-      isLoading: true,
-      error: null
-    });
+    (useQuery as any)
+      .mockReturnValueOnce({
+        data: undefined,
+        isLoading: true,
+        error: null
+      })
+      .mockReturnValueOnce({
+        data: undefined,
+        isLoading: false,
+        error: null
+      });
 
     render(
       <MemoryRouter>
@@ -36,11 +42,17 @@ describe('PostsListPage', () => {
   });
 
   it('deve mostrar mensagem de erro quando falha ao carregar posts', () => {
-    (useQuery as any).mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      error: new Error('Erro ao carregar')
-    });
+    (useQuery as any)
+      .mockReturnValueOnce({
+        data: undefined,
+        isLoading: false,
+        error: new Error('Erro ao carregar')
+      })
+      .mockReturnValueOnce({
+        data: undefined,
+        isLoading: false,
+        error: null
+      });
 
     render(
       <MemoryRouter>
@@ -52,11 +64,17 @@ describe('PostsListPage', () => {
   });
 
   it('deve renderizar lista de posts corretamente', async () => {
-    (useQuery as any).mockReturnValue({
-      data: mockPosts,
-      isLoading: false,
-      error: null
-    });
+    (useQuery as any)
+      .mockReturnValueOnce({
+        data: { data: mockPosts },
+        isLoading: false,
+        error: null
+      })
+      .mockReturnValueOnce({
+        data: [mockUser],
+        isLoading: false,
+        error: null
+      });
 
     render(
       <MemoryRouter>
@@ -66,8 +84,8 @@ describe('PostsListPage', () => {
 
     await waitFor(() => {
       mockPosts.forEach(post => {
-        const titleElement = screen.getByText(post.title);
-        expect(titleElement).toBeInTheDocument();
+        expect(screen.getByText(post.title)).toBeInTheDocument();
+        expect(screen.getByText(post.body)).toBeInTheDocument();
       });
     });
   });

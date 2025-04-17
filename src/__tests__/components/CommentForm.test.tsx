@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
@@ -22,65 +23,172 @@ const defaultProps = {
 };
 
 describe('CommentForm', () => {
+  const mockComment = {
+    name: '',
+    email: '',
+    body: '',
+  };
+
+  const mockOnChange = vi.fn();
+  const mockOnSubmit = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('deve renderizar campos do formulário', () => {
-    render(<CommentForm {...defaultProps} />);
+  it('renderiza corretamente', () => {
+    render(
+      <CommentForm
+        comment={mockComment}
+        onChange={mockOnChange}
+        onSubmit={mockOnSubmit}
+        isLoading={false}
+      />
+    );
+
     expect(screen.getByLabelText(/nome/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/comentário/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /enviar/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /enviar comentário/i })).toBeInTheDocument();
   });
 
-  it('deve chamar onChange ao digitar nos campos', () => {
-    const handleChange = vi.fn();
-    render(<CommentForm {...defaultProps} onChange={handleChange} />);
+  it('mostra estado de carregamento', () => {
+    render(
+      <CommentForm
+        comment={mockComment}
+        onChange={mockOnChange}
+        onSubmit={mockOnSubmit}
+        isLoading={true}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: /enviando/i })).toBeDisabled();
+  });
+
+  it('valida nome com menos de 3 caracteres', async () => {
+    render(
+      <CommentForm
+        comment={mockComment}
+        onChange={mockOnChange}
+        onSubmit={mockOnSubmit}
+        isLoading={false}
+      />
+    );
 
     const nameInput = screen.getByLabelText(/nome/i);
-    const emailInput = screen.getByLabelText(/email/i);
-    const bodyInput = screen.getByLabelText(/comentário/i);
+    fireEvent.change(nameInput, { target: { value: 'ab' } });
 
-    fireEvent.change(nameInput, { target: { value: 'Teste' } });
-    fireEvent.change(emailInput, { target: { value: 'teste@teste.com' } });
-    fireEvent.change(bodyInput, { target: { value: 'Teste de comentário' } });
-
-    expect(handleChange).toHaveBeenCalledTimes(3);
+    await waitFor(() => {
+      expect(screen.getByText(/o nome deve ter pelo menos 3 caracteres/i)).toBeInTheDocument();
+    });
   });
 
-  it('deve chamar onSubmit ao enviar o formulário com dados válidos', async () => {
-    const handleSubmit = vi.fn();
-    const currentComment = {
-      name: 'Teste',
-      email: 'teste@teste.com',
-      body: 'Teste de comentário',
-      postId: 1
+  it('valida email inválido', async () => {
+    render(
+      <CommentForm
+        comment={mockComment}
+        onChange={mockOnChange}
+        onSubmit={mockOnSubmit}
+        isLoading={false}
+      />
+    );
+
+    const emailInput = screen.getByLabelText(/email/i);
+    fireEvent.change(emailInput, { target: { value: 'email-invalido' } });
+
+    await waitFor(() => {
+      expect(screen.getByText(/por favor, insira um email válido/i)).toBeInTheDocument();
+    });
+  });
+
+  it('valida comentário com menos de 10 caracteres', async () => {
+    render(
+      <CommentForm
+        comment={mockComment}
+        onChange={mockOnChange}
+        onSubmit={mockOnSubmit}
+        isLoading={false}
+      />
+    );
+
+    const bodyInput = screen.getByLabelText(/comentário/i);
+    fireEvent.change(bodyInput, { target: { value: 'curto' } });
+
+    await waitFor(() => {
+      expect(screen.getByText(/o comentário deve ter pelo menos 10 caracteres/i)).toBeInTheDocument();
+    });
+  });
+
+  it('mostra preview do comentário', () => {
+    const comment = {
+      name: 'João Silva',
+      email: 'joao@exemplo.com',
+      body: 'Este é um comentário de teste.'
     };
 
     render(
       <CommentForm
-        {...defaultProps}
-        comment={currentComment}
-        onSubmit={handleSubmit}
+        comment={comment}
+        onChange={mockOnChange}
+        onSubmit={mockOnSubmit}
+        isLoading={false}
       />
     );
 
-    const form = screen.getByTestId('comment-form');
-    fireEvent.submit(form);
+    fireEvent.click(screen.getByText('Mostrar preview'));
 
-    expect(handleSubmit).toHaveBeenCalledTimes(1);
-    expect(handleSubmit).toHaveBeenCalledWith(currentComment);
+    expect(screen.getByText(/preview do comentário/i)).toBeInTheDocument();
+    expect(screen.getByText(comment.body, { selector: 'p.text-gray-600' })).toBeInTheDocument();
+    expect(screen.getByText(`— ${comment.name}`)).toBeInTheDocument();
   });
 
-  it('deve mostrar loading no botão quando isLoading for true', () => {
-    render(<CommentForm {...defaultProps} isLoading={true} />);
-    expect(screen.getByRole('button', { name: 'Enviando...' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Enviando...' })).toBeDisabled();
+  it('não envia formulário com erros de validação', async () => {
+    render(
+      <CommentForm
+        comment={mockComment}
+        onChange={mockOnChange}
+        onSubmit={mockOnSubmit}
+        isLoading={false}
+      />
+    );
+
+    const submitButton = screen.getByRole('button', { name: /enviar comentário/i });
+    await userEvent.click(submitButton);
+
+    expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 
-  it('deve renderizar campos do formulário com postId', () => {
-    render(<CommentForm {...defaultProps} postId={1} />);
-    expect(screen.getByTestId('comment-form')).toBeInTheDocument();
+  it('envia formulário válido', async () => {
+    const validComment = {
+      name: 'João Silva',
+      email: 'joao@exemplo.com',
+      body: 'Este é um comentário de teste válido.',
+    };
+
+    render(
+      <CommentForm
+        comment={validComment}
+        onChange={mockOnChange}
+        onSubmit={mockOnSubmit}
+        isLoading={false}
+      />
+    );
+
+    const submitButton = screen.getByRole('button', { name: /enviar comentário/i });
+    await userEvent.click(submitButton);
+
+    expect(mockOnSubmit).toHaveBeenCalledWith(validComment);
+  });
+
+  it('suporta modo escuro', () => {
+    render(<CommentForm {...defaultProps} />);
+    const labels = [
+      screen.getByLabelText('Nome').previousElementSibling,
+      screen.getByLabelText('Email').previousElementSibling,
+      screen.getByLabelText('Comentário').previousElementSibling
+    ];
+    labels.forEach(label => {
+      expect(label).toHaveClass('block text-sm font-medium text-gray-700 dark:text-gray-300');
+    });
   });
 }); 

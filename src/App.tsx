@@ -7,11 +7,13 @@ import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import { ThemeProvider } from './contexts/ThemeContext';
 import LoadingSpinner from './components/LoadingSpinner';
+import { ToastProvider } from './contexts/ToastContext';
 
 // Lazy loading dos componentes de página
 const PostsListPage = lazy(() => import('./pages/PostsListPage'));
 const PostDetailPage = lazy(() => import('./pages/PostDetailPage'));
 const AuthorPostsPage = lazy(() => import('./pages/AuthorPostsPage'));
+const AuthorsListPage = lazy(() => import('./pages/AuthorsListPage'));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,21 +33,24 @@ const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <Router basename={basePath}>
-          <div className="min-h-screen flex flex-col">
-            <Header />
-            <main className="flex-grow container mx-auto px-4 py-8">
-              <Suspense fallback={<LoadingSpinner />}>
-                <Routes>
-                  <Route path="/" element={<PostsListPage />} />
-                  <Route path="/posts/:id" element={<PostDetailPage />} />
-                  <Route path="/author/:id" element={<AuthorPostsPage />} />
-                </Routes>
-              </Suspense>
-            </main>
-            <Footer />
-          </div>
-        </Router>
+        <ToastProvider>
+          <Router basename={basePath}>
+            <div className="min-h-screen flex flex-col">
+              <Header />
+              <main className="flex-grow container mx-auto px-4 py-8">
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Routes>
+                    <Route path="/" element={<PostsListPage />} />
+                    <Route path="/posts/:id" element={<PostDetailPage />} />
+                    <Route path="/author/:id" element={<AuthorPostsPage />} />
+                    <Route path="/authors" element={<AuthorsListPage />} />
+                  </Routes>
+                </Suspense>
+              </main>
+              <Footer />
+            </div>
+          </Router>
+        </ToastProvider>
       </ThemeProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

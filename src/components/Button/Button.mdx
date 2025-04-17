@@ -1,0 +1,72 @@
+import { Meta, Story, Controls, Primary } from '@storybook/blocks';
+import * as ButtonStories from './Button.stories';
+
+<Meta of={ButtonStories} />
+
+# Button
+
+O componente `Button` é um elemento de interface fundamental que permite aos usuários realizar ações e tomar decisões.
+
+## Visão Geral
+
+O `Button` é um componente altamente personalizável que suporta diferentes variantes visuais, tamanhos e estados. Ele é construído seguindo as melhores práticas de acessibilidade e pode ser facilmente integrado em qualquer parte da aplicação.
+
+## Uso
+
+```tsx
+import { Button } from './components/Button';
+
+// Exemplo básico
+<Button variant="primary">Clique aqui</Button>
+
+// Com ícone
+<Button variant="secondary" icon={<Icon />}>Ação</Button>
+
+// Desabilitado
+<Button disabled>Desabilitado</Button>
+```
+
+## Props
+
+<Controls />
+
+## Variantes
+
+O componente `Button` suporta três variantes principais:
+
+- **Primary**: O estilo padrão para ações principais
+- **Secondary**: Para ações secundárias ou menos importantes
+- **Outline**: Para ações que precisam de menos ênfase visual
+
+## Estados
+
+O botão pode estar em diferentes estados:
+
+- **Normal**: Estado padrão
+- **Disabled**: Quando a ação não está disponível
+- **Loading**: Quando uma ação está em progresso
+- **Error**: Quando ocorreu um erro na ação
+
+## Acessibilidade
+
+O componente `Button` segue as diretrizes WCAG 2.1 e inclui:
+
+- Suporte a navegação por teclado
+- Atributos ARIA apropriados
+- Feedback visual para estados interativos
+- Suporte a leitores de tela
+
+## Boas Práticas
+
+1. Use o botão primário para a ação principal da tela
+2. Mantenha o texto do botão claro e conciso
+3. Evite usar múltiplos botões primários na mesma tela
+4. Forneça feedback visual para ações de longa duração
+
+## Exemplos
+
+<Story of={ButtonStories.Primary} />
+
+<Story of={ButtonStories.Secondary} />
+
+<Story of={ButtonStories.Outline} /> 

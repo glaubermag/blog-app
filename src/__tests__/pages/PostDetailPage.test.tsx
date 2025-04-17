@@ -68,7 +68,7 @@ describe('PostDetailPage', () => {
     });
 
     renderWithRouter(<PostDetailPage />, { route: `/posts/${postId}`, path: '/posts/:id' });
-    expect(screen.getByText('Ocorreu um erro ao carregar os dados. Por favor, tente novamente mais tarde.')).toBeInTheDocument();
+    expect(screen.getByText('Erro ao carregar o post. Por favor, tente novamente mais tarde.')).toBeInTheDocument();
   });
 
   it('deve mostrar mensagem de erro quando falha ao carregar comentários', () => {
@@ -86,7 +86,7 @@ describe('PostDetailPage', () => {
     });
 
     renderWithRouter(<PostDetailPage />, { route: `/posts/${postId}`, path: '/posts/:id' });
-    expect(screen.getByText('Ocorreu um erro ao carregar os dados. Por favor, tente novamente mais tarde.')).toBeInTheDocument();
+    expect(screen.getByText('Erro ao carregar o post. Por favor, tente novamente mais tarde.')).toBeInTheDocument();
   });
 
   it('deve renderizar post, autor e comentários corretamente', async () => {
@@ -111,8 +111,8 @@ describe('PostDetailPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText(`Por: ${mockUser.name}`)).toBeInTheDocument();
-      expect(screen.getByText(mockUser.email)).toBeInTheDocument();
+      expect(screen.getByText(mockUser.name)).toBeInTheDocument();
+      expect(screen.getByText(mockUser.company.name)).toBeInTheDocument();
     });
 
     await waitFor(() => {

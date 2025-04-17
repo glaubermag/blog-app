@@ -1,98 +1,99 @@
-// src/pages/PostsListPage.tsx
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import PostCard from '../components/PostCard';
+import AuthorCard from '../components/AuthorCard';
 import * as api from '../services/api';
 import SearchBar from '../components/SearchBar';
 import Pagination from '../components/Pagination';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import { useSearch } from '../hooks/useSearch';
+import { User, Post } from '../types';
 
-const POSTS_PER_PAGE = 9;
+const AUTHORS_PER_PAGE = 9;
 
-const PostsListPage: React.FC = () => {
+const AuthorsListPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
-
-  const { data: posts, isLoading: isLoadingPosts, error: postsError } = useQuery({
-    queryKey: ['posts'],
-    queryFn: () => api.getPosts(),
-  });
 
   const { data: users, isLoading: isLoadingUsers, error: usersError } = useQuery({
     queryKey: ['users'],
     queryFn: () => api.getUsers(),
-    enabled: !!posts,
+  });
+
+  const { data: posts, isLoading: isLoadingPosts } = useQuery({
+    queryKey: ['posts'],
+    queryFn: () => api.getPosts(),
+    enabled: !!users,
   });
 
   const {
     searchQuery,
     setSearchQuery,
-    searchResults: filteredPosts,
+    searchResults: filteredAuthors,
     suggestions,
     isSearching,
     isLoading: isSearchLoading,
   } = useSearch({
-    items: posts?.data || [],
-    searchKeys: ['title', 'body'],
+    items: users || [],
+    searchKeys: ['name', 'email', 'company'],
     maxSuggestions: 5,
     debounceMs: 300,
   });
 
   const handleSuggestionSelect = (suggestion: string) => {
     setSearchQuery(suggestion);
-    setCurrentPage(1); // Resetar a página ao selecionar uma sugestão
+    setCurrentPage(1);
   };
 
-  if (isLoadingPosts || isLoadingUsers) {
+  if (isLoadingUsers || isLoadingPosts) {
     return <LoadingSpinner />;
   }
 
-  if (postsError || usersError) {
-    return <ErrorMessage message="Erro ao carregar os posts. Por favor, tente novamente mais tarde." />;
+  if (usersError) {
+    return <ErrorMessage message="Erro ao carregar os autores. Por favor, tente novamente mais tarde." />;
   }
 
-  const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
-  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
-  const paginatedPosts = filteredPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
+  const getAuthorPostCount = (userId: number) => {
+    return posts?.data.filter((post: Post) => post.userId === userId).length || 0;
+  };
+
+  const totalPages = Math.ceil(filteredAuthors.length / AUTHORS_PER_PAGE);
+  const startIndex = (currentPage - 1) * AUTHORS_PER_PAGE;
+  const paginatedAuthors = filteredAuthors.slice(startIndex, startIndex + AUTHORS_PER_PAGE);
 
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-          Posts Recentes
+          Autores
         </h1>
         <SearchBar
           value={searchQuery}
           onChange={setSearchQuery}
-          placeholder="Buscar posts..."
+          placeholder="Buscar autores..."
           suggestions={suggestions}
           onSuggestionSelect={handleSuggestionSelect}
           isLoading={isSearchLoading}
         />
       </div>
 
-      {filteredPosts.length === 0 ? (
+      {filteredAuthors.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-600 dark:text-gray-300" data-testid="no-results">
             {isSearching
-              ? `Nenhum post encontrado com o termo "${searchQuery}"`
-              : 'Nenhum post encontrado'}
+              ? `Nenhum autor encontrado com o termo "${searchQuery}"`
+              : 'Nenhum autor encontrado'}
           </p>
         </div>
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {paginatedPosts.map((post) => {
-              const author = users?.find(user => user.id === post.userId);
-              return (
-                <PostCard
-                  key={post.id}
-                  post={post}
-                  author={author}
-                />
-              );
-            })}
+            {paginatedAuthors.map((author: User) => (
+              <AuthorCard
+                key={author.id}
+                author={author}
+                postCount={getAuthorPostCount(author.id)}
+              />
+            ))}
           </div>
 
           {totalPages > 1 && (
@@ -108,4 +109,4 @@ const PostsListPage: React.FC = () => {
   );
 };
 
-export default PostsListPage;
+export default AuthorsListPage; 

@@ -1,35 +1,25 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { useQuery } from '@tanstack/react-query';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import AuthorPostsPage from '../../pages/AuthorPostsPage';
 import { mockUser, mockPosts } from '../utils/mocks';
 import '@testing-library/jest-dom';
 
+// Mock do useQuery
 vi.mock('@tanstack/react-query', () => ({
-  useQuery: vi.fn().mockReturnValue({
-    data: undefined,
-    isLoading: false,
-    error: null
-  })
+  useQuery: vi.fn()
 }));
 
-// Helper para renderizar com router
-const renderWithRouter = (ui: React.ReactElement, { route = '/', path = '/' } = {}) => {
-  window.history.pushState({}, 'Test page', route)
-
+const renderWithRouter = (component: React.ReactElement) => {
   return render(
-    <MemoryRouter initialEntries={[route]}>
-      <Routes>
-        <Route path={path} element={ui} />
-      </Routes>
-    </MemoryRouter>
+    <BrowserRouter>
+      {component}
+    </BrowserRouter>
   );
 };
 
 describe('AuthorPostsPage', () => {
-  const authorId = '1'; // ID usado nos testes
-
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -47,16 +37,16 @@ describe('AuthorPostsPage', () => {
         error: null
       });
 
-    renderWithRouter(<AuthorPostsPage />, { route: `/author/${authorId}`, path: '/author/:id' });
+    renderWithRouter(<AuthorPostsPage />);
     expect(screen.getByText('Carregando...')).toBeInTheDocument();
   });
 
-  it('deve mostrar mensagem de erro quando falha ao carregar', () => {
+  it('exibe mensagem de erro quando falha ao carregar dados do autor', () => {
     (useQuery as any)
       .mockReturnValueOnce({
         data: undefined,
         isLoading: false,
-        error: new Error('Erro ao carregar')
+        error: new Error('Erro ao carregar autor')
       })
       .mockReturnValueOnce({
         data: undefined,
@@ -64,13 +54,11 @@ describe('AuthorPostsPage', () => {
         error: null
       });
 
-    renderWithRouter(<AuthorPostsPage />, { route: `/author/${authorId}`, path: '/author/:id' });
+    renderWithRouter(<AuthorPostsPage />);
     expect(screen.getByText('Ocorreu um erro ao carregar os dados do autor.')).toBeInTheDocument();
   });
 
   it('deve renderizar detalhes do autor e seus posts corretamente', async () => {
-    const authorPosts = mockPosts.filter(p => p.userId === parseInt(authorId));
-    
     (useQuery as any)
       .mockReturnValueOnce({
         data: mockUser,
@@ -78,27 +66,31 @@ describe('AuthorPostsPage', () => {
         error: null
       })
       .mockReturnValueOnce({
-        data: authorPosts,
+        data: mockPosts,
         isLoading: false,
         error: null
       });
 
-    renderWithRouter(<AuthorPostsPage />, { route: `/author/${authorId}`, path: '/author/:id' });
+    renderWithRouter(<AuthorPostsPage />);
 
+    // Verifica informações do autor
     await waitFor(() => {
-      expect(screen.getByRole('heading', { level: 1, name: mockUser.name })).toBeInTheDocument();
+      expect(screen.getByText(mockUser.name)).toBeInTheDocument();
       expect(screen.getByText(mockUser.email)).toBeInTheDocument();
-      expect(screen.getAllByText(mockUser.company.name)[0]).toBeInTheDocument();
+      expect(screen.getByText(mockUser.company.name)).toBeInTheDocument();
+      expect(screen.getByText(mockPosts.length.toString())).toBeInTheDocument();
     });
 
+    // Verifica posts do autor
     await waitFor(() => {
-      authorPosts.forEach(post => {
+      mockPosts.forEach(post => {
         expect(screen.getByText(post.title)).toBeInTheDocument();
+        expect(screen.getByText(post.body)).toBeInTheDocument();
       });
     });
   });
 
-  it('deve mostrar mensagem quando autor não tem posts', async () => {
+  it('exibe corretamente quando autor não tem posts', async () => {
     (useQuery as any)
       .mockReturnValueOnce({
         data: mockUser,
@@ -111,14 +103,16 @@ describe('AuthorPostsPage', () => {
         error: null
       });
 
-    renderWithRouter(<AuthorPostsPage />, { route: `/author/${authorId}`, path: '/author/:id' });
-
+    renderWithRouter(<AuthorPostsPage />);
+    
     await waitFor(() => {
-      expect(screen.getByRole('heading', { level: 1, name: mockUser.name })).toBeInTheDocument();
-    });
-
-    await waitFor(() => {
-      expect(screen.getByText('Este autor ainda não possui posts publicados.')).toBeInTheDocument();
+      // Verifica informações do autor
+      expect(screen.getByText(mockUser.name)).toBeInTheDocument();
+      expect(screen.getByText(mockUser.email)).toBeInTheDocument();
+      expect(screen.getByText(mockUser.company.name)).toBeInTheDocument();
+      
+      // Verifica contador de posts zerado
+      expect(screen.getByText('0')).toBeInTheDocument();
     });
   });
 }); 
