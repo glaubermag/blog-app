@@ -88,14 +88,21 @@ describe('AuthorPostsPage', () => {
 
     renderWithRouter(<AuthorPostsPage />, { route: `/author/${authorId}`, path: '/author/:id' });
 
+    // Verifica informações do autor
     await waitFor(() => {
-      const authorNameElements = screen.getAllByText(mockUser.name);
-      expect(authorNameElements.length).toBeGreaterThan(0);
+      // Verifica o nome do autor no cabeçalho
+      const authorNameHeader = screen.getByRole('heading', { name: mockUser.name });
+      expect(authorNameHeader).toBeInTheDocument();
+      
+      // Verifica o email
       expect(screen.getByText(mockUser.email)).toBeInTheDocument();
+      
+      // Verifica a empresa
       const companyElements = screen.getAllByText(mockUser.company.name);
       expect(companyElements.length).toBeGreaterThan(0);
     });
 
+    // Verifica os posts
     await waitFor(() => {
       authorPosts.forEach(post => {
         expect(screen.getByText(post.title)).toBeInTheDocument();
@@ -119,7 +126,7 @@ describe('AuthorPostsPage', () => {
     renderWithRouter(<AuthorPostsPage />, { route: `/author/${authorId}`, path: '/author/:id' });
 
     await waitFor(() => {
-      expect(screen.getByText('Este autor ainda não possui posts publicados.')).toBeInTheDocument();
+      expect(screen.getByText('Nenhum post encontrado')).toBeInTheDocument();
     });
   });
 }); 

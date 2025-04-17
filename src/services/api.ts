@@ -15,7 +15,7 @@ export const getPost = async (id: number) => {
 
 export const getUsers = async () => {
   const response = await axios.get<User[]>(`${API_URL}/users`);
-  return response.data;
+  return { data: response.data };
 };
 
 export class UserNotFoundError extends Error {

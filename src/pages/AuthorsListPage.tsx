@@ -25,6 +25,9 @@ const AuthorsListPage: React.FC = () => {
     enabled: !!users,
   });
 
+  console.log('Posts:', posts);
+  console.log('Users:', users);
+
   const {
     searchQuery,
     setSearchQuery,
@@ -33,7 +36,7 @@ const AuthorsListPage: React.FC = () => {
     isSearching,
     isLoading: isSearchLoading,
   } = useSearch({
-    items: users || [],
+    items: users?.data || [],
     searchKeys: ['name', 'email', 'company'],
     maxSuggestions: 5,
     debounceMs: 300,
@@ -53,7 +56,9 @@ const AuthorsListPage: React.FC = () => {
   }
 
   const getAuthorPostCount = (userId: number) => {
-    return posts?.data.filter((post: Post) => post.userId === userId).length || 0;
+    const postCount = posts?.data?.filter((post: Post) => post.userId === userId).length || 0;
+    console.log('Author:', userId, 'Post Count:', postCount);
+    return postCount;
   };
 
   const totalPages = Math.ceil(filteredAuthors.length / AUTHORS_PER_PAGE);

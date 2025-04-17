@@ -7,6 +7,7 @@ interface SearchBarProps {
   suggestions?: string[];
   onSuggestionSelect?: (suggestion: string) => void;
   isLoading?: boolean;
+  className?: string;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -16,6 +17,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   suggestions = [],
   onSuggestionSelect,
   isLoading = false,
+  className = ''
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -58,7 +60,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
           onBlur={() => setIsFocused(false)}
           placeholder={placeholder}
           data-testid="search-bar"
-          className="w-full px-4 py-2 pl-10 pr-10 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
+          className={`w-full px-4 py-2 pl-10 pr-10 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors ${className}`}
+          aria-label="Buscar posts"
         />
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <svg

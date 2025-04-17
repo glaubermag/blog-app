@@ -8,6 +8,9 @@ import Footer from './components/layout/Footer';
 import { ThemeProvider } from './contexts/ThemeContext';
 import LoadingSpinner from './components/LoadingSpinner';
 import { ToastProvider } from './contexts/ToastContext';
+import RoutePreloader from './components/RoutePreloader';
+import AccessibilityAnnouncer from './components/AccessibilityAnnouncer';
+import { useAccessibilityAnnouncement } from './hooks/useAccessibilityAnnouncement';
 
 // Lazy loading dos componentes de página
 const PostsListPage = lazy(() => import('./pages/PostsListPage'));
@@ -29,6 +32,7 @@ const queryClient = new QueryClient({
 
 const App: React.FC = () => {
   const basePath = import.meta.env.BASE_URL;
+  const { announcement, priority } = useAccessibilityAnnouncement();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -49,6 +53,8 @@ const App: React.FC = () => {
               </main>
               <Footer />
             </div>
+            <RoutePreloader />
+            <AccessibilityAnnouncer message={announcement} priority={priority} />
           </Router>
         </ToastProvider>
       </ThemeProvider>

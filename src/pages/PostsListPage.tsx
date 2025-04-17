@@ -8,22 +8,31 @@ import Pagination from '../components/Pagination';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import { useSearch } from '../hooks/useSearch';
+import { Post, User } from '../types';
 
 const POSTS_PER_PAGE = 9;
 
 const PostsListPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: posts, isLoading: isLoadingPosts, error: postsError } = useQuery({
+  const { data: postsResult, isLoading: isLoadingPosts, error: postsError } = useQuery({
     queryKey: ['posts'],
     queryFn: () => api.getPosts(),
   });
 
-  const { data: users, isLoading: isLoadingUsers, error: usersError } = useQuery({
+  const { data: usersResult, isLoading: isLoadingUsers, error: usersError } = useQuery({
     queryKey: ['users'],
     queryFn: () => api.getUsers(),
-    enabled: !!posts,
+    enabled: !!postsResult?.data,
   });
+
+  const posts = postsResult?.data;
+  const users = usersResult?.data;
+
+  console.log('Posts:', posts);
+  console.log('Users:', users);
+  console.log('Is Loading Users:', isLoadingUsers);
+  console.log('Users Error:', usersError);
 
   const {
     searchQuery,
@@ -33,7 +42,7 @@ const PostsListPage: React.FC = () => {
     isSearching,
     isLoading: isSearchLoading,
   } = useSearch({
-    items: posts?.data || [],
+    items: posts || [],
     searchKeys: ['title', 'body'],
     maxSuggestions: 5,
     debounceMs: 300,
@@ -41,7 +50,7 @@ const PostsListPage: React.FC = () => {
 
   const handleSuggestionSelect = (suggestion: string) => {
     setSearchQuery(suggestion);
-    setCurrentPage(1); // Resetar a página ao selecionar uma sugestão
+    setCurrentPage(1);
   };
 
   if (isLoadingPosts || isLoadingUsers) {
@@ -83,8 +92,9 @@ const PostsListPage: React.FC = () => {
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {paginatedPosts.map((post) => {
-              const author = users?.find(user => user.id === post.userId);
+            {paginatedPosts.map((post: Post) => {
+              const author = users?.find((user: User) => user.id === post.userId);
+              console.log('Post:', post.id, 'Author:', author);
               return (
                 <PostCard
                   key={post.id}
