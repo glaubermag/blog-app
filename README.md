@@ -95,35 +95,38 @@ src/
 
 ## 🧪 Testes
 
-O projeto inclui três tipos de testes:
+O projeto possui uma suíte de testes abrangente para garantir a qualidade e a estabilidade do código. Utilizamos uma combinação de testes unitários, de integração, E2E, acessibilidade e performance.
+
+**Cobertura Atual:**
+- A cobertura de código está em constante evolução, com foco nas partes críticas da aplicação.
+- **Resultados:** A maioria dos testes unitários e de integração está passando, validando a funcionalidade dos componentes e hooks principais. Os testes E2E cobrem os fluxos de usuário essenciais (navegação, busca, visualização de detalhes).
+
+**Tipos de Testes:**
 
 ### Testes Unitários
-- Testes de componentes React
-- Testes de hooks personalizados
-- Testes de funções utilitárias
+- **Foco:** Componentes React isolados, hooks personalizados e funções utilitárias.
+- **Resultados:** Alta cobertura e sucesso na validação da lógica individual dos componentes.
 
 ### Testes de Integração
-- Testes de páginas completas
-- Testes de fluxos de navegação
-- Testes de interações entre componentes
+- **Foco:** Interação entre componentes, páginas completas e fluxos de navegação simples.
+- **Resultados:** Validação bem-sucedida da comunicação entre componentes e da renderização correta das páginas.
 
 ### Testes E2E (End-to-End)
-- Testes de fluxos completos da aplicação
-- Testes de navegação e interações do usuário
-- Testes de integração com a API
-- Testes de acessibilidade automatizados
+- **Foco:** Fluxos completos do usuário, simulação de interações reais e integração com a API (mockada).
+- **Resultados:** Cobertura dos principais fluxos, como visualização de posts, busca e navegação entre páginas.
 
-### Testes de Acessibilidade
-- Verificação de hierarquia de cabeçalhos
-- Testes de contraste de cores
-- Verificação de atributos ARIA
-- Testes de navegação por teclado
-- Feedback para leitores de tela
+### Testes de Acessibilidade (Jest-Axe)
+- **Foco:** Verificação automática de violações das diretrizes WCAG.
+- **Resultados:** Identificação e correção de problemas básicos de acessibilidade nos componentes testados.
 
-Para executar os testes:
+### Testes de Performance (Lighthouse / Playwright)
+- **Foco:** Análise de métricas como LCP, FCP, TBT e pontuação geral do Lighthouse.
+- **Resultados:** Análises pontuais indicam boa performance inicial, com espaço para otimizações contínuas.
+
+**Como Executar:**
 
 ```bash
-# Executar todos os testes
+# Executar todos os testes (unitários e integração)
 npm test
 
 # Executar testes em modo watch
@@ -137,6 +140,8 @@ npm run test:a11y
 ```
 
 ## 📚 Documentação
+
+**Status Atual:** A documentação visual dos componentes via Storybook está parcialmente implementada e **requer correções e ajustes**, especialmente na configuração de alguns componentes e na organização das histórias. A documentação em MDX e os padrões de código estão mais estáveis.
 
 ### Storybook
 A documentação visual dos componentes está disponível através do Storybook:
